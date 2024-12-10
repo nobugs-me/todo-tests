@@ -1,8 +1,6 @@
 package com.todo.requests;
 
 import com.todo.models.Todo;
-import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 

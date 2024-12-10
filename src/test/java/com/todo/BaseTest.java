@@ -1,4 +1,4 @@
-package com.bhft.todo;
+package com.todo;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
