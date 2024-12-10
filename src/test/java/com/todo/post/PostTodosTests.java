@@ -3,12 +3,15 @@ package com.todo.post;
 import com.todo.BaseTest;
 import com.todo.models.Todo;
 import com.todo.requests.TodoRequest;
+import com.todo.requests.ValidatedTodoRequest;
 import com.todo.specs.RequestSpec;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -86,25 +89,12 @@ public class PostTodosTests extends BaseTest {
         String maxLengthText = "A".repeat(255);
         Todo newTodo = new Todo(3, maxLengthText, false);
 
+        ValidatedTodoRequest authValReq = new ValidatedTodoRequest(RequestSpec.authSpec());
         // Отправляем POST запрос для создания нового TODO
-        given()
-                .filter(new AllureRestAssured())
-                .contentType(ContentType.JSON)
-                .body(newTodo)
-                .when()
-                .post("/todos")
-                .then()
-                .statusCode(201)
-                .body(is(emptyOrNullString())); // Проверяем, что тело ответа пустое
+        authValReq.create(newTodo);
 
         // Проверяем, что TODO было успешно создано
-        Todo[] todos = given()
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(200)
-                .extract()
-                .as(Todo[].class);
+        List<Todo> todos = authValReq.readAll();
 
         // Ищем созданную задачу в списке
         boolean found = false;
