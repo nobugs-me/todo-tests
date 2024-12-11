@@ -1,4 +1,4 @@
-package com.bhft.todo.put;
+package com.todo.put;
 
 import com.bhft.todo.BaseTest;
 import io.qameta.allure.restassured.AllureRestAssured;

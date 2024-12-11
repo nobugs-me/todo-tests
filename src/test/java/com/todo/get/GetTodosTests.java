@@ -1,4 +1,4 @@
-package com.bhft.todo.get;
+package com.todo.get;
 
 
 import com.bhft.todo.BaseTest;

@@ -5,7 +5,7 @@ import com.todo.requests.TodoRequest;
 
 public class Main {
     public static void main(String[] args) {
-        Request request = new TodoRequest(reqSpec);
-        Request reuest1 = new TodoRequest();
+//        Request request = new TodoRequest(reqSpec);
+//        Request reuest1 = new TodoRequest();
     }
 }

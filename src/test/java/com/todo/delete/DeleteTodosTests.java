@@ -1,11 +1,7 @@
-package com.bhft.todo.delete;
+package com.todo.delete;
 
-import com.bhft.todo.BaseTest;
-
-import com.bhft.todo.BaseTest;
+import com.todo.BaseTest;
 import io.qameta.allure.restassured.AllureRestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
