@@ -1,6 +1,6 @@
 package com.todo.put;
 
-import com.bhft.todo.BaseTest;
+import com.todo.BaseTest;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
