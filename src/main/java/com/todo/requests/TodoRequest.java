@@ -1,6 +1,8 @@
 package com.todo.requests;
 
 import com.todo.models.Todo;
+import com.todo.requests.interfaces.CrudInterface;
+import com.todo.requests.interfaces.SearchInterface;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
@@ -40,6 +42,7 @@ public class TodoRequest extends Request implements CrudInterface<Todo>, SearchI
     @Override
     public Response readAll(int offset, int limit) {
         return given()
+                .spec(reqSpec)
                 .queryParam("offset", offset)
                 .queryParam("limit", limit)
                 .when()
@@ -48,6 +51,7 @@ public class TodoRequest extends Request implements CrudInterface<Todo>, SearchI
 
     public Response readAll() {
         return given()
+                .spec(reqSpec)
                 .when()
                 .get(TODO_ENDPOINT);
     }

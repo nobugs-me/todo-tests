@@ -1,4 +1,4 @@
-package com.todo.specs;
+package com.todo.specs.request;
 
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.authentication.BasicAuthScheme;
@@ -32,7 +32,7 @@ public class RequestSpec {
         BasicAuthScheme basicAuthScheme = new BasicAuthScheme();
         basicAuthScheme.setUserName("admin");
         basicAuthScheme.setPassword("admin");
-        baseSpecBuilder().setAuth(basicAuthScheme);
-        return baseSpecBuilder().build();
+        var authBuilder = baseSpecBuilder().setAuth(basicAuthScheme);
+        return authBuilder.build();
     }
 }

@@ -1,15 +1,15 @@
 package com.todo.requests;
 
 import com.todo.models.Todo;
-import io.restassured.response.Response;
+import com.todo.requests.interfaces.CrudInterface;
+import com.todo.requests.interfaces.SearchInterface;
+import com.todo.storages.TestDataStorage;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 
 import java.util.List;
 
 public class ValidatedTodoRequest extends Request implements CrudInterface<Todo>, SearchInterface<Todo> {
-    private static final String TODO_ENDPOINT = "/todos";
-
     private TodoRequest todoRequest;
 
     public ValidatedTodoRequest(RequestSpecification reqSpec) {
@@ -19,10 +19,12 @@ public class ValidatedTodoRequest extends Request implements CrudInterface<Todo>
 
     @Override
     public String create(Todo entity) {
-        return todoRequest.create(entity)
+        var response = todoRequest.create(entity)
                 .then()
                 .assertThat()
                 .statusCode(HttpStatus.SC_CREATED).extract().asString();
+        TestDataStorage.getInstance().addData(entity);
+        return response;
     }
 
     @Override

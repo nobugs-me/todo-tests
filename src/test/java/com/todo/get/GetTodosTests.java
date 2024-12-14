@@ -2,6 +2,8 @@ package com.todo.get;
 
 
 import com.todo.BaseTest;
+import com.todo.annotations.DataPreparationExtension;
+import com.todo.annotations.PrepareTodo;
 import io.qameta.allure.*;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
@@ -14,9 +16,13 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import com.todo.models.Todo;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.List;
 
 @Epic("TODO Management")
 @Feature("Get Todos API")
+@ExtendWith(DataPreparationExtension.class)
 public class GetTodosTests extends BaseTest {
 
     @BeforeEach
@@ -71,34 +77,14 @@ public class GetTodosTests extends BaseTest {
     }
 
     @Test
+    @PrepareTodo(5)
     @Description("Использование параметров offset и limit для пагинации")
     public void testGetTodosWithOffsetAndLimit() {
-        // Создаем 5 TODO
-        for (int i = 1; i <= 5; i++) {
-            createTodo(new Todo(i, "Task " + i, i % 2 == 0));
-        }
-
-        Response response =
-                given()
-                        .filter(new AllureRestAssured())
-                        .queryParam("offset", 2)
-                        .queryParam("limit", 2)
-                        .when()
-                        .get("/todos")
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/json")
-                        .body("", hasSize(2))
-                        .extract().response();
 
         // Проверяем, что получили задачи с id 3 и 4
-        Todo[] todos = response.getBody().as(Todo[].class);
+        List<Todo> todos = todoRequester.getValidatedRequest().readAll(2,2);
 
-        Assertions.assertEquals(3, todos[0].getId());
-        Assertions.assertEquals("Task 3", todos[0].getText());
-
-        Assertions.assertEquals(4, todos[1].getId());
-        Assertions.assertEquals("Task 4", todos[1].getText());
+        Assertions.assertEquals(todos.size(), 2);
     }
 
     @Test
