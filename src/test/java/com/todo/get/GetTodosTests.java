@@ -3,6 +3,8 @@ package com.todo.get;
 
 import com.todo.BaseTest;
 import com.todo.annotations.DataPreparationExtension;
+import com.todo.annotations.Mobile;
+import com.todo.annotations.MobileExecutionExtension;
 import com.todo.annotations.PrepareTodo;
 import io.qameta.allure.*;
 import io.qameta.allure.restassured.AllureRestAssured;
@@ -23,6 +25,7 @@ import java.util.List;
 @Epic("TODO Management")
 @Feature("Get Todos API")
 @ExtendWith(DataPreparationExtension.class)
+@ExtendWith(MobileExecutionExtension.class)
 public class GetTodosTests extends BaseTest {
 
     @BeforeEach
@@ -78,6 +81,7 @@ public class GetTodosTests extends BaseTest {
 
     @Test
     @PrepareTodo(5)
+    @Mobile
     @Description("Использование параметров offset и limit для пагинации")
     public void testGetTodosWithOffsetAndLimit() {
 

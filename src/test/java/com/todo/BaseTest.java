@@ -1,5 +1,6 @@
 package com.todo;
 
+import com.todo.conf.Configuration;
 import com.todo.requests.TodoRequest;
 import com.todo.requests.TodoRequester;
 import com.todo.specs.request.RequestSpec;
@@ -19,7 +20,7 @@ public class BaseTest {
     @BeforeAll
     public static void setup() {
         RestAssured.defaultParser = Parser.JSON;
-        RestAssured.baseURI = "http://localhost";
+        RestAssured.baseURI = Configuration.getProperty("baseUrl");
         RestAssured.port = 8080;
     }
 
