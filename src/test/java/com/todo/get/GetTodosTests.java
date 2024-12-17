@@ -10,10 +10,13 @@ import io.qameta.allure.*;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static com.todo.generators.TestDataGenerator.generateTestData;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
@@ -21,6 +24,7 @@ import com.todo.models.Todo;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
+import java.util.Random;
 
 @Epic("TODO Management")
 @Feature("Get Todos API")
@@ -46,11 +50,21 @@ public class GetTodosTests extends BaseTest {
                 .body("", hasSize(0));
     }
 
+    public void userCanCreateTodoWithArabicText() {
+        // генерируем todo
+        // проставляем text=arabic
+        // создаем
+        // проверяем успех
+    }
+
     @Test
     @Description("Получение списка TODO с существующими записями")
     public void testGetTodosWithExistingEntries() {
         // Предварительно создать несколько TODO
-        Todo todo1 = new Todo(1, "Task 1", false);
+        Todo todo1 = generateTestData(Todo.class);
+
+        todo1.setText("arabic symbols");
+
         Todo todo2 = new Todo(2, "Task 2", true);
 
         createTodo(todo1);
@@ -80,12 +94,10 @@ public class GetTodosTests extends BaseTest {
     }
 
     @Test
-    @PrepareTodo(5)
     @Mobile
+    @PrepareTodo(5)
     @Description("Использование параметров offset и limit для пагинации")
     public void testGetTodosWithOffsetAndLimit() {
-
-        // Проверяем, что получили задачи с id 3 и 4
         List<Todo> todos = todoRequester.getValidatedRequest().readAll(2,2);
 
         Assertions.assertEquals(todos.size(), 2);
