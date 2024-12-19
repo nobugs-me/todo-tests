@@ -1,5 +1,6 @@
 package com.todo;
 
+import com.todo.annotations.BeforeEachExtension;
 import com.todo.conf.Configuration;
 import com.todo.requests.TodoRequest;
 import com.todo.requests.TodoRequester;
@@ -7,15 +8,16 @@ import com.todo.specs.request.RequestSpec;
 import com.todo.storages.TestDataStorage;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import com.todo.models.Todo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static io.restassured.RestAssured.given;
-
+@ExtendWith(BeforeEachExtension.class)
 public class BaseTest {
     protected TodoRequester todoRequester;
+    protected SoftAssertions softly;
 
     @BeforeAll
     public static void setup() {
@@ -26,48 +28,22 @@ public class BaseTest {
 
     @BeforeEach
     public void setupTest() {
-        todoRequester = new TodoRequester(RequestSpec.authSpec());
-    }
-
-    protected void createTodo(Todo todo) {
-        given()
-                .contentType("application/json")
-                .body(todo)
-                .when()
-                .post("/todos")
-                .then()
-                .statusCode(201);
-    }
-
-    protected void deleteAllTodos() {
-
-        Todo[] todos = given()
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(200)
-                .extract()
-                .as(Todo[].class);
-
-        for (Todo todo : todos) {
-            given()
-                    .auth()
-                    .preemptive()
-                    .basic("admin", "admin")
-                    .when()
-                    .delete("/todos/" + todo.getId())
-                    .then()
-                    .statusCode(204);
-        }
+        todoRequester = new TodoRequester(RequestSpec.authSpecAsAdmin());
+        softly = new SoftAssertions();
     }
 
     @AfterEach
     public void clean() {
         TestDataStorage.getInstance().getStorage()
                 .forEach((k, v) ->
-                    new TodoRequest(RequestSpec.authSpec())
+                    new TodoRequest(RequestSpec.authSpecAsAdmin())
                             .delete(k));
 
         TestDataStorage.getInstance().clean();
+    }
+
+    @AfterEach
+    public void assertAll() {
+        softly.assertAll();
     }
 }

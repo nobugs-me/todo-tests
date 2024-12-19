@@ -1,23 +1,18 @@
 package com.todo.put;
 
 import com.todo.BaseTest;
+import com.todo.models.Todo;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.*;
 
-import com.todo.models.Todo;
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class PutTodosTests extends BaseTest {
-
-    @BeforeEach
-    public void setupEach() {
-        deleteAllTodos();
-    }
 
     /**
      * TC1: Обновление существующего TODO корректными данными.
@@ -26,7 +21,6 @@ public class PutTodosTests extends BaseTest {
     public void testUpdateExistingTodoWithValidData() {
         // Создаем TODO для обновления
         Todo originalTodo = new Todo(1, "Original Task", false);
-        createTodo(originalTodo);
 
         // Обновленные данные
         Todo updatedTodo = new Todo(1, "Updated Task", true);
@@ -86,7 +80,6 @@ public class PutTodosTests extends BaseTest {
     public void testUpdateTodoWithMissingFields() {
         // Создаем TODO для обновления
         Todo originalTodo = new Todo(2, "Task to Update", false);
-        createTodo(originalTodo);
 
         // Обновленные данные с отсутствующим полем 'text'
         String invalidTodoJson = "{ \"id\": 2, \"completed\": true }";
@@ -110,7 +103,6 @@ public class PutTodosTests extends BaseTest {
     public void testUpdateTodoWithInvalidDataTypes() {
         // Создаем TODO для обновления
         Todo originalTodo = new Todo(3, "Another Task", false);
-        createTodo(originalTodo);
 
         // Обновленные данные с некорректным типом поля 'completed'
         String invalidTodoJson = "{ \"id\": 3, \"text\": \"Updated Task\", \"completed\": \"notBoolean\" }";
@@ -132,7 +124,6 @@ public class PutTodosTests extends BaseTest {
     public void testUpdateTodoWithoutChangingData() {
         // Создаем TODO для обновления
         Todo originalTodo = new Todo(4, "Task without Changes", false);
-        createTodo(originalTodo);
 
         // Отправляем PUT запрос с теми же данными
         given()

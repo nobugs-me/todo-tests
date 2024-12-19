@@ -17,11 +17,6 @@ import static org.hamcrest.Matchers.*;
 
 public class PostTodosTests extends BaseTest {
 
-    @BeforeEach
-    public void setupEach() {
-        deleteAllTodos();
-    }
-
     @Test
     public void testCreateTodoWithValidData() {
         Todo newTodo = new Todo(1, "New Task", false);
@@ -131,7 +126,6 @@ public class PostTodosTests extends BaseTest {
     public void testCreateTodoWithExistingId() {
         // Сначала создаем TODO с id = 5
         Todo firstTodo = new Todo(5, "First Task", false);
-        createTodo(firstTodo);
 
         // Пытаемся создать другую TODO с тем же id
         Todo duplicateTodo = new Todo(5, "Duplicate Task", true);
