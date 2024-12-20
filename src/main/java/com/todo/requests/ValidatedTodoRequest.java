@@ -4,6 +4,7 @@ import com.todo.models.Todo;
 import com.todo.requests.interfaces.CrudInterface;
 import com.todo.requests.interfaces.SearchInterface;
 import com.todo.storages.TestDataStorage;
+import io.qameta.allure.Step;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 
@@ -18,6 +19,7 @@ public class ValidatedTodoRequest extends Request implements CrudInterface<Todo>
     }
 
     @Override
+    @Step("Create {entity}")
     public String create(Todo entity) {
         var response = todoRequest.create(entity)
                 .then()

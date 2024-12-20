@@ -19,4 +19,11 @@ public class IncorrectDataResponse {
         responseSpecBuilder.expectBody("message", Matchers.containsString("You are trying to use non-existing id:" + id) );
         return responseSpecBuilder.build();
     }
+
+    public static ResponseSpecification offsetOrLimitHaveIncorrectValues() {
+        ResponseSpecBuilder responseSpecBuilder = new ResponseSpecBuilder();
+        responseSpecBuilder.expectStatusCode(HttpStatus.SC_BAD_REQUEST);
+        responseSpecBuilder.expectBody("message", Matchers.containsString("Offset or limit has incorrect values") );
+        return responseSpecBuilder.build();
+    }
 }

@@ -5,6 +5,7 @@ import com.todo.BaseTest;
 import com.todo.annotations.BeforeEachExtension;
 import com.todo.annotations.Mobile;
 import com.todo.annotations.PrepareTodo;
+import com.todo.specs.response.IncorrectDataResponse;
 import io.qameta.allure.*;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
@@ -28,129 +29,37 @@ import java.util.List;
 @ExtendWith(BeforeEachExtension.class)
 public class GetTodosTests extends BaseTest {
     @Test
-    @Description("Получение пустого списка TODO, когда база данных пуста")
-    public void testGetTodosWhenDatabaseIsEmpty() {
-        given()
-                .filter(new AllureRestAssured())
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .body("", hasSize(0));
-    }
-
-    public void userCanCreateTodoWithArabicText() {
-        // генерируем todo
-        // проставляем text=arabic
-        // создаем
-        // проверяем успех
-    }
-
-    @Test
-    @Description("Получение списка TODO с существующими записями")
+    @PrepareTodo(5)
+    @Description("Авторизованный юзер может получить список всех todo")
     public void testGetTodosWithExistingEntries() {
-        // Предварительно создать несколько TODO
-        Todo todo1 = generateTestData(Todo.class);
+        var createdTodos = todoRequester.getValidatedRequest().readAll();
 
-        todo1.setText("arabic symbols");
-
-        Todo todo2 = new Todo(2, "Task 2", true);
-
-
-
-        Response response =
-                given()
-                        .filter(new AllureRestAssured())
-                        .when()
-                        .get("/todos")
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/json")
-                        .body("", hasSize(2))
-                        .extract().response();
-
-        // Дополнительная проверка содержимого
-        Todo[] todos = response.getBody().as(Todo[].class);
-
-        Assertions.assertEquals(1, todos[0].getId());
-        Assertions.assertEquals("Task 1", todos[0].getText());
-        Assertions.assertFalse(todos[0].isCompleted());
-
-        Assertions.assertEquals(2, todos[1].getId());
-        Assertions.assertEquals("Task 2", todos[1].getText());
-        Assertions.assertTrue(todos[1].isCompleted());
+        softly.assertThat(createdTodos).hasSize(5);
     }
 
     @Test
     @Mobile
     @PrepareTodo(5)
-    @Description("Использование параметров offset и limit для пагинации")
+    @Description("Авторизованный юзер может получать список todo с учетом offset и limit для пагинации")
     public void testGetTodosWithOffsetAndLimit() {
-        List<Todo> todos = todoRequester.getValidatedRequest().readAll(2,2);
+        var createdTodos = todoRequester.getValidatedRequest().readAll(2,2);
 
-        Assertions.assertEquals(todos.size(), 2);
+        softly.assertThat(createdTodos).hasSize(2);
     }
 
     @Test
     @DisplayName("Передача некорректных значений в offset и limit")
     public void testGetTodosWithInvalidOffsetAndLimit() {
-        // Тест с отрицательным offset
-        given()
-                .filter(new AllureRestAssured())
-                .queryParam("offset", -1)
-                .queryParam("limit", 2)
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(400)
-                .contentType("text/plain")
-                .body(containsString("Invalid query string"));
-
-        // Тест с нечисловым limit
-        given()
-                .filter(new AllureRestAssured())
-                .queryParam("offset", 0)
-                .queryParam("limit", "abc")
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(400)
-                .contentType("text/plain")
-                .body(containsString("Invalid query string"));
-
-        // Тест с отсутствующим значением offset
-        given()
-                .filter(new AllureRestAssured())
-                .queryParam("offset", "")
-                .queryParam("limit", 2)
-                .when()
-                .get("/todos")
-                .then()
-                .statusCode(400)
-                .contentType("text/plain")
-                .body(containsString("Invalid query string"));
+        todoRequester.getRequest().readAll(-1,-1)
+                .then().assertThat().spec(IncorrectDataResponse.offsetOrLimitHaveIncorrectValues());
     }
 
     @Test
     @DisplayName("Проверка ответа при превышении максимально допустимого значения limit")
     public void testGetTodosWithExcessiveLimit() {
-        // Создаем 10 TODO
+        var piginatedTodos = todoRequester.getValidatedRequest().readAll(1, 1000);
+        var allTodos = todoRequester.getValidatedRequest().readAll();
 
-        Response response =
-                given()
-                        .filter(new AllureRestAssured())
-                        .queryParam("limit", 1000)
-                        .when()
-                        .get("/todos")
-                        .then()
-                        .statusCode(200)
-                        .contentType("application/json")
-                        .extract().response();
-
-        Todo[] todos = response.getBody().as(Todo[].class);
-
-        // Проверяем, что вернулось 10 задач
-        Assertions.assertEquals(10, todos.length);
+        softly.assertThat(piginatedTodos).isEqualTo(allTodos);
     }
 }

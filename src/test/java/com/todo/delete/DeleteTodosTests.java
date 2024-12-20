@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Random;
 
 public class DeleteTodosTests extends BaseTest {
-
     @Test
     @PrepareTodo(1)
     @Description("TC1: Авторизированный юзер может удалить todo")
@@ -38,7 +37,7 @@ public class DeleteTodosTests extends BaseTest {
     }
 
     @Test
-    @Description("TC4: Авторизованный юзер не может удалить юзера с несуществующим id")
+    @Description("TC4: Авторизованный юзер не может удалить todo с несуществующим id")
     public void testDeleteNonExistentTodo() {
         var nonExistingId = new Random().nextInt();
         todoRequester.getRequest().delete(nonExistingId)
